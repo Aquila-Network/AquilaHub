@@ -48,3 +48,32 @@ Run `curl -s -L https://raw.githubusercontent.com/Aquila-Network/AquilaHub/main/
 Build image (one time process): `docker build https://raw.githubusercontent.com/Aquila-Network/AquilaHub/main/Dockerfile -t aquilahub:local`
 
 Run image (to deploy Aquila DB): `docker run -p 5002:5002 -d aquilahub:local`
+
+# Client SDKs
+We currently have multiple client libraries in progress to abstract the communication between deployed Aquila Hub and your applications.
+
+[Python](https://github.com/Aquila-Network/AquilaPy)
+
+[Node JS](https://github.com/Aquila-Network/AquilaJS)
+
+## Where to get private key (wallet key) for client authentication
+When you use a client library to authenticate with Aquila Hub, you might need access the same private key (wallet key) used by Aquila Hub. This key is located inside `/ossl/` directory within Aquila Hub docker container (in your computer if you have installed Aquila Hub directly without docker). To access the keys inside your Aquila Hub container, follow below steps:
+
+* identify `CONTAINER ID` for the already running `aquilahub` docker instance:
+`docker ps`
+* take a copy of private keys from docker container to your host machine:
+`docker cp CONTAINER_ID:/ossl/* ./`
+* now you will see a new directory named `ossl` at your current location. Use the keys inside it.
+
+#### tips for advanced users
+If your pipeline requires the private keys to be generated in advance, you can do it in your host machine and then mount it to the container's `/ossl/` directory. 
+
+Run:
+```
+mkdir -p <host>/ossl/
+openssl genrsa -passout pass:1234 -des3 -out <host>/ossl/private.pem 2048
+openssl rsa -passin pass:1234 -in <host>/ossl/private.pem -outform PEM -pubout -out <host>/ossl/public.pem
+openssl rsa -passin pass:1234 -in <host>/ossl/private.pem -out <host>/ossl/private_unencrypted.pem -outform PEM
+```
+#### Note:
+You can reuse the same keys across Aquila DB, Aquila Hub and Aquila Port.
