@@ -62,7 +62,7 @@ When you use a client library to authenticate with Aquila Hub, you might need ac
 * identify `CONTAINER ID` for the already running `aquilahub` docker instance:
 `docker ps`
 * take a copy of private keys from docker container to your host machine:
-`docker cp CONTAINER_ID:/ossl/* ./`
+`docker cp CONTAINER_ID:/ossl/ ./`
 * now you will see a new directory named `ossl` at your current location. Use the keys inside it.
 
 #### tips for advanced users
