@@ -85,7 +85,7 @@ class Manager ():
         for database_name in os.listdir(location):
             with open(location+database_name, "r") as schema__:
                 schema_ = json.load(schema__)
-                database_name_ = self.preload_model(schema_, persist=False)
+                database_name_ = self.preload_model(schema_, database_name_override=database_name, persist=False)
                 if database_name_ == None:
                     logging.debug("Model preloading failed for database: "+database_name)
                 elif database_name_ == database_name:
@@ -93,7 +93,7 @@ class Manager ():
                 else:
                     logging.debug("Model missmatch for database "+database_name+", schema backup is modified. Hope you know what you're doing.")
 
-    def preload_model (self, json_schema, persist=True):
+    def preload_model (self, json_schema, database_name_override=None, persist=True):
         """
         Download a model and load it into memory
         """
@@ -105,6 +105,10 @@ class Manager ():
         # use "schema_copy" variable instead
         database_name = get_database_name(json_schema)
         encoder_name = get_encoder_name(json_schema)
+        
+        # Override database name if needed
+        if database_name_override != None:
+            database_name = database_name_override
         
         # load model for database
         if database_name:
@@ -123,9 +127,9 @@ class Manager ():
                         self.db_to_encoders_map[database_name] = None
                         return None
                 else:
-                    return self.persist_db(schema_copy, database_name, persist)
+                    return self.persist_db(schema_copy, database_name, persist=persist)
             else:
-                return self.persist_db(schema_copy, database_name, persist)
+                return self.persist_db(schema_copy, database_name, persist=persist)
         else:
             return None
 
